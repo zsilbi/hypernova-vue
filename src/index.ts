@@ -1,45 +1,27 @@
-import Vue, { VueConstructor } from 'vue';
+import { createApp } from 'vue';
 import hypernova, { load } from 'hypernova';
 import { findNode, getData } from 'nova-helpers';
-import { CombinedVueInstance } from 'vue/types/vue';
 
 type HypernovaPayload = {
   node: HTMLElement;
   data: any;
 }
 
-type VueInstance = CombinedVueInstance<Vue, object, object, object, object>
-
-type VueWithStoreInstance =
-  CombinedVueInstance<Vue, object, object, object, object> & { $store: any };
-
-export { default as Vue } from 'vue';
-
 export { load } from 'hypernova';
 
 export const mountComponent = (
-  Component: VueConstructor,
+  Component,
   node: HTMLElement,
   data: any,
-): VueInstance => {
-  const vm = new Component({
-    propsData: data,
-  });
-
-  if (!node.childElementCount) {
-    node.appendChild(document.createElement('div'));
-  }
-
-  vm.$mount(node.children[0]);
-
-  return vm;
+) => {
+  return createApp(Component, data).mount(node);
 };
 
 export const renderInPlaceholder = (
   name: string,
-  Component: VueConstructor,
+  Component,
   id: string,
-): VueInstance => {
+) => {
   const node: HTMLElement = findNode(name, id);
   const data: any = getData(name, id);
 
@@ -64,7 +46,7 @@ export const loadById = (name: string, id: string): HypernovaPayload => {
   return null;
 };
 
-export const renderVue = (name: string, Component: VueConstructor): void => hypernova({
+export const renderVue = (name: string, Component): void => hypernova({
   server() {
     throw new Error('Use hypernova-vue/server instead');
   },
@@ -80,37 +62,5 @@ export const renderVue = (name: string, Component: VueConstructor): void => hype
     }
 
     return Component;
-  },
-});
-
-export const renderVuex = (
-  name: string,
-  ComponentDefinition: any,
-  createStore: Function,
-): void => hypernova({
-  server() {
-    throw new Error('Use hypernova-vue/server instead');
-  },
-
-  client() {
-    const payloads = load(name);
-    if (payloads) {
-      payloads.forEach((payload: HypernovaPayload) => {
-        const { node, data } = payload;
-        const { propsData, state } = data;
-
-        const store = createStore();
-        store.replaceState(state);
-
-        const Component: VueConstructor = Vue.extend({
-          ...ComponentDefinition,
-          store,
-        });
-
-        const vm = mountComponent(Component, node, propsData) as VueWithStoreInstance;
-      });
-    }
-
-    return ComponentDefinition;
   },
 });
