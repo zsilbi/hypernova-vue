@@ -20,18 +20,16 @@ Here's how to use it in your module:
 import { renderVue, Vue } from 'hypernova-vue'
 import HeaderComponent from './components/HeaderComponent.vue'
 
-const Header = Vue.extend(HeaderComponent)
-
-export default renderVue('Header', Header)
+export default renderVue('Header', HeaderComponent)
 ```
 
 ## Usage with Vuex
 
 
 ```js
-import { renderVuex, Vue } from 'hypernova-vue'
-import createStore from './store'
+import { renderPinia, Vue } from 'hypernova-vue'
+import { createPinia } from 'pinia'
 import HeaderComponent from './components/HeaderComponent.vue'
 
-export default renderVuex('Header', HeaderComponent, createStore)
+export default renderPinia('Header', HeaderComponent, createPinia)
 ```

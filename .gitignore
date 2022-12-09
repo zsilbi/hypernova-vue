@@ -18,6 +18,8 @@ build/Release
 # Dependency directory
 node_modules
 
+.idea
+
 # Optional npm cache directory
 .npm
 
@@ -26,7 +28,6 @@ node_modules
 
 TODO
 coverage
-lib
 
 # Only apps should have lockfiles
 npm-shrinkwrap.json
