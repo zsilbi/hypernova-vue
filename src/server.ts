@@ -16,3 +16,27 @@ export const renderVue = (name: string, Component): void => hypernova({
     throw new Error('Use hypernova-vue instead');
   },
 });
+
+export const renderPinia = (
+  name: string,
+  Component,
+  createStore: Function,
+): void => hypernova({
+  server() {
+    return async (propsData): Promise<string> => {
+      const store = createStore();
+
+      const vm = createSSRApp(Component, propsData)
+
+      vm.use(store);
+
+      const contents = await renderToString(vm);
+
+      return serialize(name, contents, { propsData, state: store.state.value });
+    };
+  },
+
+  client() {
+    throw new Error('Use hypernova-vue instead');
+  },
+});

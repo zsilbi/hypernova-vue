@@ -46,21 +46,32 @@ export const loadById = (name: string, id: string): HypernovaPayload => {
   return null;
 };
 
-export const renderVue = (name: string, Component): void => hypernova({
+export const renderPinia = (
+  name: string,
+  Component,
+  createStore: Function,
+): void => hypernova({
   server() {
     throw new Error('Use hypernova-vue/server instead');
   },
 
   client() {
     const payloads = load(name);
+
     if (payloads) {
       payloads.forEach((payload: HypernovaPayload) => {
-        const { node, data: propsData } = payload;
+        const { node, data } = payload;
+        const { propsData, state } = data;
 
-        mountComponent(Component, node, propsData);
+        const store = createStore();
+        store.state.value = state;
+
+        const vm = mountComponent(Component, node, propsData);
+        vm.use(store);
       });
     }
 
     return Component;
   },
 });
+
