@@ -80,10 +80,10 @@ export const renderPinia = (
     if (payloads) {
       payloads.forEach((payload: HypernovaPayload) => {
         const { node, data } = payload;
-        const { propsData, state } = data;
+        const { propsData, devaluedState } = data;
 
         const store = createStore();
-        store.state.value = state;
+        store.state.value = (null,eval)('(' + devaluedState + ')');
 
         const vm = mountComponent(Component, node, propsData);
         vm.use(store);

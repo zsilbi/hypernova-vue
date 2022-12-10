@@ -37,6 +37,7 @@
     "typescript": "^3.6.0"
   },
   "dependencies": {
+    "@nuxt/devalue": "^2.0.0",
     "hypernova": "^2.5.0",
     "nova-helpers": "^1.0.1-alpha.0",
     "vue": "^3.2.45"
