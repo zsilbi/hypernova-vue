@@ -83,7 +83,7 @@ export const renderPinia = (
         const { propsData, devaluedState } = data;
 
         const store = createStore();
-        store.state.value = (null,eval)('(' + devaluedState + ')');
+        store.state.value = typeof devaluedState === 'string' ? (0, eval)('(' + devaluedState + ')') : {};
 
         const vm = mountComponent(Component, node, propsData);
         vm.use(store);
