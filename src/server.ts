@@ -1,6 +1,7 @@
 import { createSSRApp } from 'vue';
 import { renderToString } from 'vue/server-renderer';
 import hypernova, { serialize } from 'hypernova';
+import devalue from '@nuxt/devalue'
 
 export const renderVue = (name: string, Component): void => hypernova({
   server() {
@@ -32,7 +33,7 @@ export const renderPinia = (
 
       const contents = await renderToString(vm);
 
-      return serialize(name, contents, { propsData, state: store.state.value });
+      return serialize(name, contents, { propsData, state: devalue(store.state.value) });
     };
   },
 
