@@ -1,5 +1,5 @@
 import { createApp } from 'vue';
-import hypernova, { load } from 'hypernova';
+import hypernova, { load, fromScript } from 'hypernova';
 import { findNode, getData } from 'nova-helpers';
 
 type HypernovaPayload = {
@@ -76,6 +76,13 @@ export const renderPinia = (
 
   client() {
     const payloads = load(name);
+    const lastData = fromScript([{ 'data-hypernova-last': 'true' }]);
+
+    let lastSSRStateValue;
+
+    if (lastData) {
+      lastSSRStateValue = typeof lastData.state === 'string' ? (0, eval)('(' + lastData.state + ')') : {};
+    }
 
     if (payloads) {
       payloads.forEach((payload: HypernovaPayload) => {
@@ -83,7 +90,12 @@ export const renderPinia = (
         const { propsData, devaluedState } = data;
 
         const store = createStore();
-        store.state.value = typeof devaluedState === 'string' ? (0, eval)('(' + devaluedState + ')') : {};
+
+        if (lastSSRStateValue) {
+          store.state.value = lastSSRStateValue;
+        } else {
+          store.state.value = typeof devaluedState === 'string' ? (0, eval)('(' + devaluedState + ')') : {};
+        }
 
         const vm = mountComponent(Component, node, propsData);
         vm.use(store);
